@@ -132,6 +132,7 @@ public class UserPointService {
         user.setTotalRewardPoints(totalUserRewardPoints + transationPoint);
 
         pointsPerPayer.put(transaction.getPayer() , (pointsPerPayer.getOrDefault(transaction.getPayer(), 0L).longValue()) + transationPoint);
+        logger.info("pointsPerPayer " + pointsPerPayer);
         user.setPointsPerPayer(pointsPerPayer);
 
         AddPointResponse response = new AddPointResponse();
@@ -173,13 +174,12 @@ public class UserPointService {
 
             if(transaction.getPoints() <= spendPoint) {
                 remainingPoint = transaction.getPoints();
-                pointsPerPayer.put(transaction.getPayer(), 0L);
                 transaction.setPoints(0L);
             } else {
                 remainingPoint = spendPoint;
-                pointsPerPayer.put(transaction.getPayer(), pointsPerPayer.get(transaction.getPayer()) - remainingPoint);
                 transaction.setPoints(transaction.getPoints() - remainingPoint);
             }
+            pointsPerPayer.put(transaction.getPayer(), pointsPerPayer.get(transaction.getPayer()) - remainingPoint);
             transaction.setTimestamp(LocalDateTime.now());
             logger.info("Successfully updated user pointsperpayer Map");
 
